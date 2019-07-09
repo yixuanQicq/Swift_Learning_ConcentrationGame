@@ -10,12 +10,32 @@ import Foundation
 
 class Concentration {
     
-    var cards = [Card]()
+    private(set) var cards = [Card]()
     
     // optional varible, it could not be set
-    var indexOfOneAndOnlyFaceUpCard: Int?
+    private var indexOfOneAndOnlyFaceUpCard: Int? {
+        get{
+            var foundIndex: Int?
+            for index in cards.indices{
+                if cards[index].isFaceUp{
+                    if foundIndex == nil{
+                        foundIndex = index
+                    }else {
+                        return nil
+                    }
+                }
+            }
+            return foundIndex
+        }
+        set{
+            for index in cards.indices{
+                cards[index].isFaceUp = (index == newValue)
+            }
+        }
+    }
     
     func chooseCard(at index: Int){
+        assert(cards.indices.contains(index),"Concentration.chooseCard(at: \(index)): choosen index does not exist")
         if !cards[index].isMatched{
             if let matchIndex = indexOfOneAndOnlyFaceUpCard, matchIndex != index {
                 // check if card match
@@ -24,28 +44,23 @@ class Concentration {
                     cards[index].isMatched = true
                 }
                 cards[index].isFaceUp = true
-                indexOfOneAndOnlyFaceUpCard = nil
             } else {
                 //either no card or 2 cards are faced up
-                for flipDownIndex in cards.indices{
-                    cards[flipDownIndex].isFaceUp = false
-                }
-                cards[index].isFaceUp = true
                 indexOfOneAndOnlyFaceUpCard = index
             }
         }
     }
     
     init(numberOfPairsOfCards: Int) {
+        assert(numberOfPairsOfCards>0,"Concentration.init (\(numberOfPairsOfCards)): must have at least one pair of cards")
         for _ in 1 ... numberOfPairsOfCards {
             let card = Card()
             cards += [card,card]
         }
-        // TODO: Shuffle the cards
+        // Shuffle the cards
         cards = cards.shuffled()
     }
-    
-    
 }
+
 
 
