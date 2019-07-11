@@ -18,20 +18,34 @@ class ViewController: UIViewController {
     
     private(set) var flipCount = 0 {
         didSet{
-            flipCountLabel.text = "Flips: \(flipCount)"
+            updateFlipCountLabel()
         }
+    }
+    
+    private func updateFlipCountLabel(){
+        let attributes: [NSAttributedString.Key:Any] = [
+            .strokeWidth : -1.0,
+            .strokeColor : #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        ]
+        let attributedString = NSAttributedString(string: "Flips: \(flipCount)", attributes: attributes)
+        flipCountLabel.attributedText = attributedString
     }
     
     @IBAction private func newGameButton(_ sender: Any) {
         game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
         updateViewFromMode()
         flipCount = 0
-        emojiChoices = ["💕","🥰","💙💛","🌸","💎","🌈","🍀","🐣","❄️"]
+        //emojiChoices = ["💕","🥰","💙💛","🌸","💎","🌈","🍀","🐣","❄️"]
+        emojiChoices = "💕🥰💛🌸💎🌈🍀🐣❄️"
     }
     
     @IBOutlet private var cardButtons: [UIButton]!
     
-    @IBOutlet private weak var flipCountLabel: UILabel!
+    @IBOutlet private weak var flipCountLabel: UILabel!{
+        didSet{
+            updateFlipCountLabel()
+        }
+    }
     
     @IBAction private func touchCard(_ sender: UIButton) {
         flipCount += 1
@@ -59,13 +73,15 @@ class ViewController: UIViewController {
         }
     }
     
-    private var emojiChoices = ["💕","🥰","💙💛","🌸","💎","🌈","🍀","🐣","❄️"]
+    //private var emojiChoices = ["💕","🥰","💛","🌸","💎","🌈","🍀","🐣","❄️"]
+    private var emojiChoices = "💕🥰💛🌸💎🌈🍀🐣❄️"
     
     private var emoji = [Card:String]()
     
     private func emoji(for card: Card) -> String{
         if emoji[card] == nil, emojiChoices.count > 0{
-            emoji[card] = emojiChoices.remove(at: emojiChoices.count.arc4random)
+            let randomStringIndex = emojiChoices.index(emojiChoices.startIndex, offsetBy: emojiChoices.count.arc4random)
+            emoji[card] = String(emojiChoices.remove(at: randomStringIndex))
         }
         // if nil return ?, if not return its value
         return emoji[card] ?? "?"
