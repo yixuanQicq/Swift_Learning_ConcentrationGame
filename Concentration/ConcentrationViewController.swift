@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ConcentrationViewController: UIViewController {
     
     private lazy var game: Concentration = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
     
@@ -36,7 +36,7 @@ class ViewController: UIViewController {
         updateViewFromMode()
         flipCount = 0
         //emojiChoices = ["💕","🥰","💙💛","🌸","💎","🌈","🍀","🐣","❄️"]
-        emojiChoices = "💕🥰💛🌸💎🌈🍀🐣❄️"
+        emojiChoices = theme ?? ""
     }
     
     @IBOutlet private var cardButtons: [UIButton]!
@@ -58,22 +58,30 @@ class ViewController: UIViewController {
     }
     
     private func updateViewFromMode(){
-        for index in cardButtons.indices {
-            let button = cardButtons[index]
-            let card = game.cards[index]
-            if card.isFaceUp{
-                button.setTitle(emoji (for: card), for: UIControl.State.normal)
-                button.layer.cornerRadius = 15
-                button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-            }else {
-                button.setTitle("", for: UIControl.State.normal)
-                button.layer.cornerRadius = 15
-                button.backgroundColor = card.isMatched ? #colorLiteral(red: 0.4039751887, green: 0.633209765, blue: 0.90732342, alpha: 0) : #colorLiteral(red: 0.4039751887, green: 0.633209765, blue: 0.90732342, alpha: 1)
+        if cardButtons != nil{
+            for index in cardButtons.indices {
+                let button = cardButtons[index]
+                let card = game.cards[index]
+                if card.isFaceUp{
+                    button.setTitle(emoji (for: card), for: UIControl.State.normal)
+                    button.layer.cornerRadius = 15
+                    button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+                }else {
+                    button.setTitle("", for: UIControl.State.normal)
+                    button.layer.cornerRadius = 15
+                    button.backgroundColor = card.isMatched ? #colorLiteral(red: 0.4039751887, green: 0.633209765, blue: 0.90732342, alpha: 0) : #colorLiteral(red: 0.4039751887, green: 0.633209765, blue: 0.90732342, alpha: 1)
+                }
             }
         }
     }
     
-    //private var emojiChoices = ["💕","🥰","💛","🌸","💎","🌈","🍀","🐣","❄️"]
+    var theme: String? {
+        didSet{
+            emojiChoices = theme ?? "";
+            emoji = [:]
+            updateViewFromMode()
+        }
+    }
     private var emojiChoices = "💕🥰💛🌸💎🌈🍀🐣❄️"
     
     private var emoji = [Card:String]()
